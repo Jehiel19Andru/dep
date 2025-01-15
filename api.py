@@ -35,45 +35,56 @@ def obtener_documentos():
         return jsonify(archivos), 200
     except Exception as e:
         return jsonify({"mensaje": f"Error al listar los documentos: {str(e)}"}), 500
-        
+
 @app.route('/documentos/contenido/<nombre>', methods=['GET'])
 def ver_contenido_documento(nombre):
     """Devuelve el contenido de un archivo .ipynb en formato JSON."""
     try:
         notebook_path = os.path.join(app.config['DOCUMENTS_FOLDER'], nombre)
 
-        if not os.path.exists(notebook_path):
-            return jsonify({'mensaje': 'Archivo no encontrado'}), 404
+        if os.path.exists(notebook_path) and nombre.endswith('.ipynb'):
+            with open(notebook_path, 'r', encoding='utf-8') as f:
+                notebook_content = nbformat.read(f, as_version=4)
 
-        if not nombre.endswith('.ipynb'):
-            return jsonify({'mensaje': 'El archivo no tiene formato .ipynb'}), 400
+            contenido = []
+            for cell in notebook_content.cells:
+                if cell.cell_type == 'code':
+                    cell_data = {
+                        'tipo': 'código',
+                        'contenido': cell.source,
+                        'salidas': []
+                    }
 
-        with open(notebook_path, 'r', encoding='utf-8') as f:
-            notebook_content = nbformat.read(f, as_version=4)
+                    # Procesar todas las salidas de la celda de código
+                    for output in cell.outputs:
+                        salida = {}
+                        if 'text' in output:
+                            salida = {'tipo': 'texto', 'contenido': output['text']}
+                        elif 'data' in output:
+                            if 'image/png' in output['data']:
+                                salida = {'tipo': 'imagen', 'contenido': output['data']['image/png']}
+                            elif 'application/json' in output['data']:
+                                salida = {'tipo': 'json', 'contenido': output['data']['application/json']}
+                            elif 'text/html' in output['data']:
+                                salida = {'tipo': 'html', 'contenido': output['data']['text/html']}
 
-        contenido = []
-        for cell in notebook_content.cells:
-            if cell.cell_type == 'code':
-                cell_data = {
-                    'tipo': 'código',
-                    'contenido': cell.source,
-                    'salidas': []
-                }
+                        # Agregar cada salida al arreglo de salidas
+                        if salida:
+                            cell_data['salidas'].append(salida)
 
-                for output in cell.outputs:
-                    if 'text' in output:
-                        cell_data['salidas'].append({'tipo': 'texto', 'contenido': output['text']})
-                    elif 'data' in output:
-                        if 'image/png' in output['data']:
-                            cell_data['salidas'].append({'tipo': 'imagen', 'contenido': output['data']['image/png']})
-                
-                contenido.append(cell_data)
-            elif cell.cell_type == 'markdown':
-                contenido.append({'tipo': 'texto', 'contenido': cell.source})
+                    # Agregar la celda con todas sus salidas al contenido
+                    contenido.append(cell_data)
+                elif cell.cell_type == 'markdown':
+                    contenido.append({
+                        'tipo': 'texto',
+                        'contenido': cell.source
+                    })
 
-        return jsonify(contenido), 200
+            return jsonify(contenido), 200
+        else:
+            return jsonify({'mensaje': 'Archivo no encontrado o formato incorrecto'}), 404
     except Exception as e:
-        return jsonify({'mensaje': f"Error al procesar el archivo: {str(e)}"}), 500
+        return jsonify({'mensaje': f"Error al leer el contenido del archivo: {str(e)}"}), 500
 
 @app.route('/generar-arbol', methods=['POST'])
 def generar_arbol():
