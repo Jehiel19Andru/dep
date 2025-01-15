@@ -1,52 +1,155 @@
+/* ===== Global Styles ===== */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #842b8e;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to bottom, #373b44, #4286f4); /* Elegant gradient background */
+    color: #fff;
     margin: 0;
     padding: 0;
+    line-height: 1.6;
 }
 
+/* ===== Main Container ===== */
 .container {
     max-width: 900px;
     margin: 50px auto;
-    background-color: rgb(236, 107, 226);
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff; /* White background for content contrast */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25); /* Subtle shadow for depth */
+    color: #333; /* Dark text for readability */
 }
 
+/* ===== Header Styling ===== */
 h1 {
     text-align: center;
-    color: #333;
+    color: #333; /* Matches container text color */
+    font-size: 2.8rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
 }
 
+h1::after {
+    content: '';
+    width: 80px;
+    height: 4px;
+    background-color: #4286f4; /* Accent color */
+    display: block;
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+/* ===== Notebook List Styling ===== */
 ul {
     list-style-type: none;
     padding: 0;
 }
 
 ul li {
-    background-color: #377e98;
+    background-color: #4286f4; /* Primary color */
+    color: #fff;
     margin: 10px 0;
-    padding: 10px;
+    padding: 15px;
+    font-size: 1.1rem;
     cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 ul li:hover {
-    background-color: #dcdcdc;
+    background-color: #357ae0; /* Slightly darker on hover */
+    transform: translateY(-3px); /* Lifting effect */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
+ul li::after {
+    content: "📄"; /* Icon for notebook items */
+    margin-left: 10px;
+    font-size: 1.2rem;
+}
+
+/* ===== Notebook Content Section ===== */
 #notebook-content {
-    margin-top: 20px;
-    padding-top: 10px;
-    border-top: 1px solid #ccc;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #4286f4; /* Separator for clarity */
 }
 
+/* ===== Notebook Content Styling ===== */
 #content {
     white-space: pre-wrap;
     word-wrap: break-word;
-    background-color: #fafafa;
+    background-color: #f9f9f9; /* Light background for better readability */
     padding: 20px;
-    border-radius: 5px;
-    font-family: "Courier New", monospace;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Courier New', monospace; /* Monospace font for code clarity */
+    color: #333;
+    overflow-x: auto;
+}
+
+#content pre {
+    margin: 0;
+    padding: 15px;
+    background-color: #eef1f5; /* Slightly darker than content for contrast */
+    border-radius: 6px;
+    font-size: 1rem;
+    overflow-x: auto;
+    border: 1px solid #ddd; /* Light border for separation */
+}
+
+/* Styling for images inside the content */
+#content img {
+    display: block;
+    max-width: 100%; /* Make images responsive */
+    margin: 20px auto;
+    border: 2px solid #4286f4; /* Matches the accent color */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== Button Styling ===== */
+button {
+    background-color: #4286f4; /* Primary button color */
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+    background-color: #357ae0; /* Darker shade for hover */
+    transform: translateY(-2px); /* Lift on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== Media Queries for Responsiveness ===== */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem; /* Smaller font for smaller screens */
+    }
+
+    ul li {
+        font-size: 1rem;
+        padding: 12px;
+    }
+
+    button {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
 }
