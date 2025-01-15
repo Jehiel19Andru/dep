@@ -3,29 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualizador de Jupyter Notebooks</title>
-    <link rel="stylesheet" href="static/css/style.css">
+    <title>Resultados Gráficos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        img {
+            max-width: 90%;
+            height: auto;
+            margin: 20px 0;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Jupyter Notebooks Disponibles</h1>
-
-        <!-- Lista de notebooks -->
-        <div>
-            <h3>Seleccione un notebook:</h3>
-            <ul id="notebooks-list">
-                <!-- La lista de notebooks se llenará dinámicamente -->
-            </ul>
-        </div>
-
-        <!-- Contenido del notebook -->
-        <div id="notebook-content">
-            <h3>Contenido del notebook</h3>
-            <div id="content"></div>
-        </div>
-    </div>
-
-    <script src="static/js/script.js"></script>
+    <h1>Resultados Gráficos</h1>
+    <h2>Árbol de Decisión</h2>
+    <img id="arbol" alt="Gráfica del Árbol de Decisión" src="/arbol">
+    <h2>Frontera de Decisión</h2>
+    <img id="decision-boundary" alt="Gráfica de la Frontera de Decisión" src="/decision_boundary">
 </body>
 </html>
-
