@@ -35,55 +35,61 @@ def home():
 @app.route('/arbol', methods=['GET'])
 def servir_arbol():
     try:
-        dot_path = os.path.join(STATIC_FOLDER, "arbol_malware.dot")
-        png_path = os.path.join(STATIC_FOLDER, "arbol_malware.png")
-        
-        export_graphviz(
-            clf_tree_reduced,
-            out_file=dot_path,
-            feature_names=X_train_reduced.columns,
-            class_names=["benign", "adware", "malware"],
-            rounded=True,
-            filled=True
-        )
-        graph = Source.from_file(dot_path)
-        graph.render(png_path.replace('.png', ''), format="png", cleanup=True)
+        dot_path = os.path.join('static', "arbol_malware.dot")
+        png_path = os.path.join('static', "arbol_malware.png")
 
-        return send_from_directory(app.static_folder, 'arbol_malware.png')
+        # Generar el árbol si no existe
+        if not os.path.exists(png_path):
+            export_graphviz(
+                clf_tree_reduced,
+                out_file=dot_path,
+                feature_names=X_train_reduced.columns,
+                class_names=["benign", "adware", "malware"],
+                rounded=True,
+                filled=True
+            )
+            graph = Source.from_file(dot_path)
+            graph.render(png_path.replace('.png', ''), format="png", cleanup=True)
+
+        return send_file(png_path, mimetype='image/png')
     except Exception as e:
-        return jsonify({'mensaje': str(e)}), 500
+        return f"Error al generar la imagen del árbol: {e}", 500
 
 @app.route('/decision_boundary', methods=['GET'])
 def servir_decision_boundary():
     try:
-        def plot_decision_boundary(clf, X, y, plot_training=True, resolution=1000):
-            mins = X.min(axis=0) - 1
-            maxs = X.max(axis=0) + 1
-            x1, x2 = np.meshgrid(np.linspace(mins[0], maxs[0], resolution),
-                                 np.linspace(mins[1], maxs[1], resolution))
-            X_new = np.c_[x1.ravel(), x2.ravel()]
-            y_pred = clf.predict(X_new).reshape(x1.shape)
-            custom_cmap = ListedColormap(['#fafab0', '#9898ff', '#a0faa0'])
-            plt.contourf(x1, x2, y_pred, alpha=0.3, cmap=custom_cmap)
-            custom_cmap2 = ListedColormap(['#7d7d58', '#4c4c7f', '#507d50'])
-            plt.contour(x1, x2, y_pred, cmap=custom_cmap2, alpha=0.8)
-            if plot_training:
+        boundary_path = os.path.join('static', 'decision_boundary.png')
+
+        # Generar la frontera si no existe
+        if not os.path.exists(boundary_path):
+            def plot_decision_boundary(clf, X, y):
+                mins = X.min(axis=0) - 1
+                maxs = X.max(axis=0) + 1
+                x1, x2 = np.meshgrid(
+                    np.linspace(mins[0], maxs[0], 100),
+                    np.linspace(mins[1], maxs[1], 100)
+                )
+                X_new = np.c_[x1.ravel(), x2.ravel()]
+                y_pred = clf.predict(X_new).reshape(x1.shape)
+
+                custom_cmap = ListedColormap(['#fafab0', '#9898ff', '#a0faa0'])
+                plt.contourf(x1, x2, y_pred, alpha=0.3, cmap=custom_cmap)
                 plt.plot(X[:, 0][y == 0], X[:, 1][y == 0], "yo", label="normal")
                 plt.plot(X[:, 0][y == 1], X[:, 1][y == 1], "bs", label="adware")
                 plt.plot(X[:, 0][y == 2], X[:, 1][y == 2], "g^", label="malware")
-                plt.axis([mins[0], maxs[0], mins[1], maxs[1]])
-            plt.xlabel('min_flowpktl', fontsize=14)
-            plt.ylabel('flow_fin', fontsize=14, rotation=90)
+                plt.xlabel('min_flowpktl')
+                plt.ylabel('flow_fin')
+                plt.legend()
 
-        plt.figure(figsize=(12, 6))
-        plot_decision_boundary(clf_tree_reduced, X_train_reduced.values, y_train)
-        boundary_path = os.path.join(STATIC_FOLDER, 'decision_boundary.png')
-        plt.savefig(boundary_path)
-        plt.close()
+            plt.figure(figsize=(10, 6))
+            plot_decision_boundary(clf_tree_reduced, X_train_reduced.values, y_train)
+            plt.savefig(boundary_path)
+            plt.close()
 
-        return send_from_directory(app.static_folder, 'decision_boundary.png')
+        return send_file(boundary_path, mimetype='image/png')
     except Exception as e:
-        return jsonify({'mensaje': str(e)}), 500
+        return f"Error al generar la frontera de decisión: {e}", 500
+
 
 # Rutas para documentos Jupyter
 @app.route('/documentos', methods=['GET'])
