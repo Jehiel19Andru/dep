@@ -33,45 +33,49 @@ function fetchNotebooksList() {
 // Función para obtener el contenido de un notebook
 function fetchNotebookContent(notebookName) {
     fetch(`https://dep-2jl0.onrender.com/documentos/contenido/${notebookName}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
         .then(data => {
             const contentDiv = document.getElementById('content');
             contentDiv.innerHTML = ''; // Limpiar contenido previo
 
-            // Iterar sobre las celdas del notebook
+            if (data.length === 0) {
+                contentDiv.textContent = 'El notebook está vacío.';
+                return;
+            }
+
+            // Renderizar las celdas
             data.forEach(cell => {
                 if (cell.tipo === 'código') {
-                    cell.salidas.forEach(salida => {
-                        // Renderizar imágenes
-                        if (salida.tipo === 'imagen') {
-                            const imgElement = document.createElement('img');
-                            imgElement.src = `data:image/png;base64,${salida.contenido}`;
-                            imgElement.alt = 'Imagen de salida';
-                            contentDiv.appendChild(imgElement);
-                        }
+                    const codeBlock = document.createElement('pre');
+                    codeBlock.textContent = cell.contenido;
+                    contentDiv.appendChild(codeBlock);
 
-                        // Renderizar texto
+                    cell.salidas.forEach(salida => {
                         if (salida.tipo === 'texto') {
-                          const textElement = document.createElement('pre');
-                            textElement.textContent = salida.contenido; // Asignar el texto
-                            textElement.style.padding = '15px';
-                            textElement.style.border = '1px solid #ccc';
-                            textElement.style.borderRadius = '8px';
-                            textElement.style.backgroundColor = '#f9f9f9';
-                            textElement.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
-                            textElement.style.margin = '15px 0';
-                            textElement.style.fontFamily = '"Courier New", Courier, monospace';
-                            textElement.style.fontSize = '14px';
-                            textElement.style.color = '#333';
-                            textElement.style.whiteSpace = 'pre-wrap'; // Para manejar texto largo con saltos de línea
-                            textElement.style.wordWrap = 'break-word';
-                        contentDiv.appendChild(textElement);
+                            const textBlock = document.createElement('pre');
+                            textBlock.textContent = salida.contenido;
+                            contentDiv.appendChild(textBlock);
+                        } else if (salida.tipo === 'imagen') {
+                            const img = document.createElement('img');
+                            img.src = `data:image/png;base64,${salida.contenido}`;
+                            contentDiv.appendChild(img);
                         }
                     });
+                } else if (cell.tipo === 'texto') {
+                    const markdownBlock = document.createElement('div');
+                    markdownBlock.textContent = cell.contenido;
+                    contentDiv.appendChild(markdownBlock);
                 }
             });
         })
         .catch(error => {
             console.error('Error al obtener el contenido del notebook:', error);
+            const contentDiv = document.getElementById('content');
+            contentDiv.textContent = 'Error al cargar el contenido del notebook.';
         });
 }
