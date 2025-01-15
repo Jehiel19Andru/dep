@@ -3,28 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualizador de Jupyter Notebooks</title>
+    <title>Visualizador de Notebooks</title>
     <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Jupyter Notebooks Disponibles</h1>
+        <h1>Documentos Disponibles</h1>
 
         <!-- Lista de notebooks -->
         <div>
-            <h3>Seleccione un notebook:</h3>
+            <h3>Seleccione un Documento:</h3>
             <ul id="notebooks-list">
-                <!-- La lista de notebooks se llenará dinámicamente -->
+                <li>Cargando documentos...</li>
             </ul>
         </div>
 
         <!-- Contenido del notebook -->
         <div id="notebook-content">
-            <h3>Contenido del notebook</h3>
-            <div id="content"></div>
+            <h3>Contenido del Notebook</h3>
+            <div id="content">Seleccione un documento para visualizar su contenido.</div>
         </div>
     </div>
 
+    <div class="footer">
+        <p>Desarrollado por <a href="https://www.facebook.com/profile.php?id=100008343702296&mibextid=ZbWKwL">Jocelin Reyes</a>. Todos los derechos reservados &copy; 2025.</p>
+    </div>
+
+    <!-- Integración del script -->
     <script src="static/js/script.js"></script>
 </body>
 </html>
